@@ -1,0 +1,11 @@
+<div class="sortable {{if this.isDragingOver 'dragging-over'}} {{if @isDisabled 'disabled'}}"
+		position={{@position}}
+		sortable={{this.sortable}}
+		disabled={{@isDisabled}}
+		{{did-insert this.registerListener}}
+    {{will-destroy this.unregisterListener}}
+		...attributes>	
+	{{yield (hash
+		content=@content
+	)}}
+</div>

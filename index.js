@@ -1,6 +1,5 @@
-/* eslint-env node */
 'use strict';
 
 module.exports = {
-  name: 'ember-drag-drop-sort'
+  name: require('./package').name
 };

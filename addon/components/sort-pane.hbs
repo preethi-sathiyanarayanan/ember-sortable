@@ -1,0 +1,35 @@
+<div class="sort-pane {{if @isDisabled "disabled"}}"
+    sort-pane={{if this.sortPane true}}
+    disabled={{if @isDisabled true}}
+    {{did-insert this.registerListener}}
+    {{will-destroy this.unregisterListener}}
+    ...attributes>
+  {{#each this.collection as |item idx|}}
+    {{#if (and this.isActiveSortPane (eq this.currentOverIndex idx) this.overOnTopHalf)}}
+      <SortPlaceholder @style={{this.placeholderStyles}} />
+    {{/if}}
+
+    {{yield (hash
+      item=(component 'sortable-item'
+        isDisabled=@isDisabled
+        position=idx
+        content=item
+        items=@items
+        containment=@containment
+        scrollPane=this.scrollPane
+        scrollSpeed=this.scrollSpeed
+        dragstart=(fn this.onDragStart item idx)
+        dragend=this.onDragEnd
+        dragover=this.onDragover
+        onDrop=this.onDrop)
+	)}}
+
+    {{#if (and this.isActiveSortPane (eq this.currentOverIndex idx) this.overOnBottomHalf)}}
+      <SortPlaceholder @style={{this.placeholderStyles}} />
+    {{/if}}
+  {{else}}
+    {{#if this.isActiveSortPane}}
+      <SortPlaceholder @style={{this.placeholderStyles}} />
+    {{/if}}
+  {{/each}}
+</div>
