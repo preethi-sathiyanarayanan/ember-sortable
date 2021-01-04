@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import { bind } from '@ember/runloop';
+import { bind, later } from '@ember/runloop';
 import { get, set, setProperties, computed, action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { isEqual, isEmpty, isPresent } from '@ember/utils';
@@ -12,7 +12,6 @@ import ScrollContainer from '../classes/scroll-container';
 const DRAGACTIONS = ['mousemove', 'touchmove'];
 const DROPACTIONS = ['mouseup', 'touchend'];
 const CONTEXTMENUKEYCODE = 2;
-const PLACEHOLDER_BG_COLOR = '#ccc';
 const SCROLL_ANIMATION_ID = '_dndContainmentScroll';
 
 export default class SortableItemComponent extends Component {
@@ -106,11 +105,9 @@ export default class SortableItemComponent extends Component {
       return;
     }
 
-    // let handle = get(this, 'handle');
-
-    // if (handle && !ev.target.closest(handle)) {
-    //   return;
-    // }
+    if (this.args.hasDragHandle && !ev.target.closest('[drag-handle]')) {
+      return;
+    }
 
     this._preventDefaultBehavior(ev);
 
@@ -122,9 +119,9 @@ export default class SortableItemComponent extends Component {
     // this._preventDefaultBehavior(ev);
     this._detachDragEventManager();
 
-		this._cloneDraggable();
-
     this.args.dragstart ? this.args.dragstart(ev) : '';
+    this.sortManager.hasDragJustStarted = true
+    later(() => this.sortManager.hasDragJustStarted = false, 200);
 
     DRAGACTIONS.forEach(event => window.addEventListener(event, this._onDrag));
     DROPACTIONS.forEach(event => window.addEventListener(event, this._tearDownDragEvents));
@@ -169,7 +166,6 @@ export default class SortableItemComponent extends Component {
     return {
       'width': `${sortableContainer.offsetWidth}px`,
       'height': `${sortableContainer.offsetHeight}px`,
-      'background-color': PLACEHOLDER_BG_COLOR,
       'border-radius': sortableContainer.computedDOMStyles.borderRadius,
       'border-width': sortableContainer.computedDOMStyles.borderWidth,
       'margin': sortableContainer.computedDOMStyles.margin
@@ -177,6 +173,11 @@ export default class SortableItemComponent extends Component {
   }
 
   _onDrag(ev) {
+    if (!this.sortableContainer?.cloneNode) {
+      this._cloneDraggable()
+      return
+    }
+
     this._preventDefaultBehavior(ev);
 
     let sortableContainer = this.sortableContainer;
@@ -185,7 +186,7 @@ export default class SortableItemComponent extends Component {
     let activeSortPaneElement = this.activeSortPaneElement;
     let containmentContainer = this.containmentContainer;
 
-    element.style.display = 'none';
+    this.args.customOriginalElementOnDragStyles? this.args.customOriginalElementOnDragStyles(element) : element.style.display = 'none';
 
     sortableContainer.updatePosition({
       containmentContainer
@@ -199,7 +200,7 @@ export default class SortableItemComponent extends Component {
     // when dragging outside the viewport
     if (elementFromPoint) {
       sortableElement = elementFromPoint.closest('[sortable]'); // Check for not pane element (collide happens when nested sortable initialized)
-      sortPaneElement = elementFromPoint.closest('[sort-pane]');
+      sortPaneElement = elementFromPoint.closest( this.args.sortPaneSelector || '[sort-pane]');
     }
     cloneNode.hidden = false;
 
@@ -239,10 +240,19 @@ export default class SortableItemComponent extends Component {
   _onDrop() {
     this.args.dragend ? this.args.dragend() : '';
 
+    if (!this.sortableContainer?.cloneNode) {
+      return;
+    }
+
     this.documentWindow.classList.remove('sortable-attached');
     this.documentWindow.removeChild(this.sortableContainer.cloneNode);
     this.element.removeAttribute('style');
     this.sortableContainer.stopDrag();
+
+    setProperties(this, {
+      'sortManager.sortableContainer': null,
+      'sortManager.cardBeingDragged': false
+    });
 
     if(this.currentSortPane) {
       this.currentSortPane.onDrop ? this.currentSortPane.onDrop(this.element) : '';
@@ -253,12 +263,25 @@ export default class SortableItemComponent extends Component {
     if (get(this, 'sortManager.isDragging')) {
 
       set(this, 'sortManager.currentOverItem', this);
-
       let element = this.element;
-      let { pageY } = ev.detail;
-      let { top } = element.getBoundingClientRect();
-      let height = element.offsetHeight;
-      let overOnTopHalf = (pageY - top) < (height / 2);
+      let overOnTopHalf;
+
+      if(this.args.direction === 'x') {
+        let { pageX } = ev.detail;
+        let { right } = element.getBoundingClientRect();
+        let width = element.offsetWidth;
+        overOnTopHalf = (right - pageX) > (width / 2);
+      } else {
+        let { pageY } = ev.detail;
+        let { top } = element.getBoundingClientRect();
+        let height = element.offsetHeight;
+        overOnTopHalf = (pageY - top) < (height / 2);
+      }
+
+      if (this.sortManager.hasDragJustStarted) {
+        overOnTopHalf = true;
+      }
+      
       let currentOverIndex = this.args.position;
       let sortManager = this.sortManager;
       let sourceList = get(sortManager, 'sourceList');

@@ -80,7 +80,11 @@ export default class SortPaneComponent extends Component {
   
   @computed('sortManager.activeSortPane')
   get isActiveSortPane() {
-    return isEqual(this, get(this, 'sortManager.activeSortPane'));
+    if (this.args.retainPlaceholderOnMoveOut) {
+      return true;
+    } else {
+      return isEqual(this, get(this, 'sortManager.activeSortPane'));
+    }
   }
   
   @computed('items.[]')

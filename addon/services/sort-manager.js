@@ -1,6 +1,7 @@
 import Service from '@ember/service';
 import { get, computed, setProperties } from '@ember/object';
 import { A } from '@ember/array';
+
 export default class SortManagerService extends Service {
   currentDropPosition = null
   sourceIndex = null
@@ -15,7 +16,7 @@ export default class SortManagerService extends Service {
   sourceGroup = null
   isDragEntered = null
 	sortableContainer = null
-	
+
 	@computed('activeSortPane')
   get activeSortPaneElement() {
     return get(this, 'activeSortPane.element');
