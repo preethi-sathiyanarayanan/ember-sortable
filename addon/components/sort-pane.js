@@ -18,8 +18,6 @@ import ScrollContainer from '../classes/scroll-container';
 
 export default class SortPaneComponent extends Component {
 
-  sortPane = true;
-
   @service sortManager;
   
   @reads('sortManager.sourceList')
@@ -139,7 +137,7 @@ export default class SortPaneComponent extends Component {
       isActiveSortPane
     } = getProperties(this, ['isNotConnected', 'isActiveSortPane']);
   
-    if (isNotConnected || isActiveSortPane || this.args.isDisabled) {
+    if (isNotConnected || (!this.args.retainPlaceholderOnMoveOut && isActiveSortPane) || this.args.isDisabled) {
       return;
     }
   

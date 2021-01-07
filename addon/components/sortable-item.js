@@ -199,8 +199,8 @@ export default class SortableItemComponent extends Component {
     // Checking for elementFromPoint else will throw error
     // when dragging outside the viewport
     if (elementFromPoint) {
-      sortableElement = elementFromPoint.closest('[sortable]'); // Check for not pane element (collide happens when nested sortable initialized)
-      sortPaneElement = elementFromPoint.closest( this.args.sortPaneSelector || '[sort-pane]');
+      sortableElement = elementFromPoint.closest( `[sortable=${this.args.sortElementSelector}]`); // Check for not pane element (collide happens when nested sortable initialized)
+      sortPaneElement = elementFromPoint.closest( `[sort-pane=${this.args.sortPaneSelector}]`);
     }
     cloneNode.hidden = false;
 
@@ -251,6 +251,7 @@ export default class SortableItemComponent extends Component {
 
     setProperties(this, {
       'sortManager.sortableContainer': null,
+      'sortManager.currentOverIndex': null,
       'sortManager.cardBeingDragged': false
     });
 
@@ -266,7 +267,7 @@ export default class SortableItemComponent extends Component {
       let element = this.element;
       let overOnTopHalf;
 
-      if(this.args.direction === 'x') {
+      if(this.args.axis === 'x') {
         let { pageX } = ev.detail;
         let { right } = element.getBoundingClientRect();
         let width = element.offsetWidth;

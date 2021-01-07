@@ -1,9 +1,10 @@
 <div class="sort-pane {{if @isDisabled "disabled"}}"
-    sort-pane={{if this.sortPane true}}
+    sort-pane={{@sortPaneSelector}}
     disabled={{if @isDisabled true}}
     {{did-insert this.registerListener}}
     {{will-destroy this.unregisterListener}}
     ...attributes>
+
   {{#each this.collection as |item idx|}}
     {{#if (and this.isActiveSortPane (eq this.currentOverIndex idx) this.overOnTopHalf)}}
       <SortPlaceholder @style={{this.placeholderStyles}} />
@@ -15,6 +16,9 @@
         position=idx
         content=item
         items=@items
+        axis=@axis
+        sortElementSelector=@sortElementSelector
+        sortPaneSelector=@sortPaneSelector
         containment=@containment
         scrollPane=this.scrollPane
         scrollSpeed=this.scrollSpeed
@@ -22,7 +26,7 @@
         dragend=this.onDragEnd
         dragover=this.onDragover
         onDrop=this.onDrop)
-	)}}
+	  )}}
 
     {{#if (and this.isActiveSortPane (eq this.currentOverIndex idx) this.overOnBottomHalf)}}
       <SortPlaceholder @style={{this.placeholderStyles}} />
