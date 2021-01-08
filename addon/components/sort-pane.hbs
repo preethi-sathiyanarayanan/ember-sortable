@@ -5,7 +5,7 @@
     {{will-destroy this.unregisterListener}}
     ...attributes>
 
-  {{#each this.collection as |item idx|}}
+  {{#each @items as |item idx|}}
     {{#if (and this.isActiveSortPane (eq this.currentOverIndex idx) this.overOnTopHalf)}}
       <SortPlaceholder @style={{this.placeholderStyles}} />
     {{/if}}
@@ -19,6 +19,7 @@
         axis=@axis
         sortElementSelector=@sortElementSelector
         sortPaneSelector=@sortPaneSelector
+        modifyCloneNodeOnCreate=@modifyCloneNodeOnCreate
         containment=@containment
         scrollPane=this.scrollPane
         scrollSpeed=this.scrollSpeed

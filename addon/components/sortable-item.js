@@ -152,6 +152,7 @@ export default class SortableItemComponent extends Component {
     cloneNode.style.zIndex = '9999';
 
     this.documentWindow.classList.add('sortable-attached');
+    this.args.modifyCloneNodeOnCreate ? this.args.modifyCloneNodeOnCreate(cloneNode) : '';
     this.documentWindow.appendChild(cloneNode);
 
     setProperties(this, {
