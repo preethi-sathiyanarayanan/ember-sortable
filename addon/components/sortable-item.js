@@ -105,7 +105,7 @@ export default class SortableItemComponent extends Component {
       return;
     }
 
-    if (this.args.hasDragHandle && !ev.target.closest('[drag-handle]')) {
+    if (this.args.handle && !ev.target.closest(this.args.handle)) {
       return;
     }
 
@@ -187,7 +187,7 @@ export default class SortableItemComponent extends Component {
     let activeSortPaneElement = this.activeSortPaneElement;
     let containmentContainer = this.containmentContainer;
 
-    this.args.customOriginalElementOnDragStyles? this.args.customOriginalElementOnDragStyles(element) : element.style.display = 'none';
+    this.args.originalElementOnDragStyles? this.args.originalElementOnDragStyles(element) : element.style.display = 'none';
 
     sortableContainer.updatePosition({
       containmentContainer
