@@ -42,9 +42,8 @@ export default class SortableItemComponent extends Component {
     return isEqual(currentOverItem, this);
   }
 
-	@computed
   get documentWindow() {
-    return document.querySelector('body');
+    return document.querySelector(this.args.appendTo || 'body');
   }
 
 	@computed('containment')
