@@ -44,12 +44,12 @@ template file
 component.js file
 
 ```js
-	get model()  {
-    return {
-      squadA: A(['Ghanesh', 'Shyam', 'Karthick Kalyanasundaram', 'Rajesh']),
-      squadB: A(['Prathees', 'Venkatesh', 'Albert', 'Ramya', 'Prathees', 'Venkatesh', 'Albert', 'Ramya')
-    }
+get model()  {
+	return {
+		squadA: A(['Ghanesh', 'Shyam', 'Karthick Kalyanasundaram', 'Rajesh']),
+		squadB: A(['Prathees', 'Venkatesh', 'Albert', 'Ramya', 'Prathees', 'Venkatesh', 'Albert', 'Ramya')
 	}
+}
 ```
 
 Improvements done to support freshservice

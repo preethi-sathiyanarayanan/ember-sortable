@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import { bind, later } from '@ember/runloop';
+import { bind } from '@ember/runloop';
 import { get, set, setProperties, computed, action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { isEqual, isEmpty, isPresent } from '@ember/utils';
@@ -118,9 +118,7 @@ export default class SortableItemComponent extends Component {
     // this._preventDefaultBehavior(ev);
     this._detachDragEventManager();
 
-    this.args.dragstart ? this.args.dragstart(ev) : '';
-    this.sortManager.hasDragJustStarted = true
-    later(() => this.sortManager.hasDragJustStarted = false, 200);
+    this.args.dragstart && this.args.dragstart(ev);
 
     DRAGACTIONS.forEach(event => window.addEventListener(event, this._onDrag));
     DROPACTIONS.forEach(event => window.addEventListener(event, this._tearDownDragEvents));
@@ -174,19 +172,24 @@ export default class SortableItemComponent extends Component {
 
   _onDrag(ev) {
     if (!this.sortableContainer?.cloneNode) {
-      this._cloneDraggable()
+      this._cloneDraggable();
+      
+      this.args.originalElementOnDragStyles ? this.args.originalElementOnDragStyles(this.element) : this.element.style.display = 'none';
+
+      setProperties(this.sortManager, {
+        overOnTopHalf: true,
+        currentOverIndex: this.args.position
+      });
+
       return
     }
 
     this._preventDefaultBehavior(ev);
 
     let sortableContainer = this.sortableContainer;
-    let element = this.element;
     let cloneNode = get(sortableContainer, 'cloneNode');
     let activeSortPaneElement = this.activeSortPaneElement;
     let containmentContainer = this.containmentContainer;
-
-    this.args.originalElementOnDragStyles? this.args.originalElementOnDragStyles(element) : element.style.display = 'none';
 
     sortableContainer.updatePosition({
       containmentContainer
@@ -251,8 +254,7 @@ export default class SortableItemComponent extends Component {
 
     setProperties(this, {
       'sortManager.sortableContainer': null,
-      'sortManager.currentOverIndex': null,
-      'sortManager.cardBeingDragged': false
+      'sortManager.currentOverIndex': null
     });
 
     if(this.currentSortPane) {
@@ -278,10 +280,6 @@ export default class SortableItemComponent extends Component {
         let height = element.offsetHeight;
         overOnTopHalf = (pageY - top) < (height / 2);
       }
-
-      if (this.sortManager.hasDragJustStarted) {
-        overOnTopHalf = true;
-      }
       
       let currentOverIndex = this.args.position;
       let sortManager = this.sortManager;
@@ -297,7 +295,7 @@ export default class SortableItemComponent extends Component {
         targetIndex
       });
 
-      this.args.dragover ? this.args.dragover() : '';
+      this.args.dragover && this.args.dragover();
     }
   }
 
