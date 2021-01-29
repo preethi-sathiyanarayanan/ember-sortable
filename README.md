@@ -60,6 +60,7 @@ Improvements done to support freshservice
 * Customization on the original element styles on drag. rather than just making it display none can change say opacity now.
 * Customization on the cloned element when cloned. Say if dragging element is large dom element, moving it might be performance overload, now can customize clone node on create and remove some overflowing nodes.
 * retain placeholder on drag out
+* test helper for drag
 
 Bugs and performance fixes done
 1) Dragging a card from the bottom seems to set the placeholder in the wrong position.
