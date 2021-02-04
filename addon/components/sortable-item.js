@@ -46,7 +46,7 @@ export default class SortableItemComponent extends Component {
     return document.querySelector(this.args.appendTo || 'body');
   }
 
-	@computed('containment')
+  @computed('args.containment')
   get containmentContainer() {
     if (this.args.containment) {
       let containmentElement = this.element.closest(`${this.args.containment}`);
@@ -202,8 +202,8 @@ export default class SortableItemComponent extends Component {
     // Checking for elementFromPoint else will throw error
     // when dragging outside the viewport
     if (elementFromPoint) {
-      sortableElement = elementFromPoint.closest( `[sortable=${this.args.sortElementSelector}]`); // Check for not pane element (collide happens when nested sortable initialized)
-      sortPaneElement = elementFromPoint.closest( `[sort-pane=${this.args.sortPaneSelector}]`);
+      sortableElement = elementFromPoint.closest && elementFromPoint.closest( `[sortable=${this.args.sortElementSelector}]`); // Check for not pane element (collide happens when nested sortable initialized)
+      sortPaneElement = elementFromPoint.closest && elementFromPoint.closest( `[sort-pane=${this.args.sortPaneSelector}]`);
     }
     cloneNode.hidden = false;
 
