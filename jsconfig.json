@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"target": "es6",
+		"experimentalDecorators": true,
+		"baseUrl": ".",
+	},
+	"exclude": [
+		"coverage",
+		"dist",
+		"node_modules",
+		"tmp",
+		".git",
+		"vendor"
+	],
+}

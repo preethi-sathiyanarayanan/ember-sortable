@@ -48,7 +48,7 @@ export default class SortableItemComponent extends Component {
     return document.querySelector('body');
   }
 
-	@computed('containment')
+	@computed('args.containment')
   get containmentContainer() {
     if (this.args.containment) {
       let containmentElement = this.element.closest(`${this.args.containment}`);

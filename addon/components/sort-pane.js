@@ -83,11 +83,6 @@ export default class SortPaneComponent extends Component {
     return isEqual(this, get(this, 'sortManager.activeSortPane'));
   }
   
-  @computed('items.[]')
-  get collection() {
-    return this.args.items;
-  }
-  
   constructor() {
     super(...arguments);
   
@@ -142,7 +137,7 @@ export default class SortPaneComponent extends Component {
     set(this, 'sortManager.isDragEntered', true);
   
     let sortManager = this.sortManager;
-    let targetList = this.collection;
+    let targetList = this.args.items;
     let sourceList = get(sortManager, 'sourceList');
     let activeSortPane = this;
     let isSamePane = isEqual(sourceList, targetList);
@@ -195,7 +190,7 @@ export default class SortPaneComponent extends Component {
   @action
   onDragStart(item, sourceIndex) {
     let sortManager = this.sortManager;
-    let collection = this.collection;
+    let collection = this.args.items;
     let activeSortPane = this;
   
     setProperties(sortManager, {
