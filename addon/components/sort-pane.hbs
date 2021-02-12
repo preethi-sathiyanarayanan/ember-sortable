@@ -4,7 +4,6 @@
     {{did-insert this.registerListener}}
     {{will-destroy this.unregisterListener}}
     ...attributes>
-
   {{#each @items as |item idx|}}
     {{#if (and this.isActiveSortPane (eq this.currentOverIndex idx) this.overOnTopHalf)}}
       <SortPlaceholder @style={{this.placeholderStyles}} />
