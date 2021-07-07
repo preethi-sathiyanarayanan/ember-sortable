@@ -1,13 +1,11 @@
+import { assert } from '@ember/debug';
+
 const CSSPROPERTIES = ['margin', 'border'];
 const CONTAINERSIDES = ['Left', 'Right', 'Top', 'Bottom'];
 
-const {
-  assert
-} = console;
-
 export default class Container {
   constructor(element) {
-    assert(element, `element must be passed to the Class ${this.constructor.name}`);
+    assert(`element must be passed to the Class ${this.constructor.name}`, element);
 
     this.element = element;
     let { left, right, top, bottom } = this.element.getBoundingClientRect();

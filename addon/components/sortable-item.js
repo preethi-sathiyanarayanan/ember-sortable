@@ -122,9 +122,9 @@ export default class SortableItemComponent extends Component {
     // this._preventDefaultBehavior(ev);
     this._detachDragEventManager();
 
-		this._cloneDraggable();
+		// this._cloneDraggable();
 
-    this.args.dragstart ? this.args.dragstart(ev) : '';
+    this.args.dragstart && this.args.dragstart(ev);
 
     DRAGACTIONS.forEach(event => window.addEventListener(event, this._onDrag));
     DROPACTIONS.forEach(event => window.addEventListener(event, this._tearDownDragEvents));
@@ -177,6 +177,17 @@ export default class SortableItemComponent extends Component {
   }
 
   _onDrag(ev) {
+    if (!this.sortableContainer?.cloneNode) {
+      this._cloneDraggable();
+
+      setProperties(this.sortManager, {
+        overOnTopHalf: true,
+        currentOverIndex: this.args.position
+      });
+
+      return
+    }
+
     this._preventDefaultBehavior(ev);
 
     let sortableContainer = this.sortableContainer;
@@ -259,6 +270,22 @@ export default class SortableItemComponent extends Component {
       let { top } = element.getBoundingClientRect();
       let height = element.offsetHeight;
       let overOnTopHalf = (pageY - top) < (height / 2);
+
+      // Below code can be used if we decide to have horizontal sort(of columns) 
+      //let overOnTopHalf;
+
+      // if(this.args.axis === 'x') {
+      //   let { pageX } = ev.detail;
+      //   let { right } = element.getBoundingClientRect();
+      //   let width = element.offsetWidth;
+      //   overOnTopHalf = (right - pageX) > (width / 2);
+      // } else {
+      //   let { pageY } = ev.detail;
+      //   let { top } = element.getBoundingClientRect();
+      //   let height = element.offsetHeight;
+      //   overOnTopHalf = (pageY - top) < (height / 2);
+      // }
+
       let currentOverIndex = this.args.position;
       let sortManager = this.sortManager;
       let sourceList = get(sortManager, 'sourceList');
@@ -273,7 +300,7 @@ export default class SortableItemComponent extends Component {
         targetIndex
       });
 
-      this.args.dragover ? this.args.dragover() : '';
+      this.args.dragover && this.args.dragover();
     }
   }
 

@@ -1,13 +1,10 @@
 import Container from './container';
-
-const {
-  assert
-} = console;
+import { assert } from '@ember/debug';
 
 export default class SortableContainer extends Container {
   constructor(element) {
     super(element);
-    assert(window.event, `This Class ${this.constructor.name} should be Instantiate only on MouseEvent`);
+    assert(`This Class ${this.constructor.name} should be Instantiate only on MouseEvent`, window.event);
 
     this.event = window.event;
     this.cloneNode = this.element.cloneNode(true);
